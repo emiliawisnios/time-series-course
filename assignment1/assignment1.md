@@ -221,15 +221,14 @@ rsq
 ```
 ## [1] 0.8310077
 ```
-In statistics, the coefficient of determination represents the strength of the relationship or the portion of common variation in two time-series or variables. It is a statistical measure of how well the regression line approximates the real values. The coefficient of determination or \(R^2\) is mainly used to analyze how well a variable can predict another one. The returned value gives us the percentage of change of variable X that can be explained by changes in variable Y. In our case the coefficient of determination is equal to 0.8310077 or 83.1%, which means that changes can explain 83.1% of next changes.
 
 
 ### Output interpretation
 
-TO DO
-
+In statistics, the coefficient of determination represents the strength of the relationship or the portion of common variation in two time-series or variables. It is a statistical measure of how well the regression line approximates the real values. The coefficient of determination or \(R^2\) is mainly used to analyze how well a variable can predict another one. The returned value gives us the percentage of change of variable X that can be explained by changes in variable Y. In our case the coefficient of determination is equal to 0.8310077 or 83.1%, which means that changes can explain 83.1% of next changes.
 
 *Can you devise a profitable trading strategy based on the behaviour of the two series?*
+
 
 # Task 2
 
@@ -250,14 +249,14 @@ sp5may <- read.table(www_sp5may, header=TRUE)
 plot(sp5may$lnfuture, sp5may$lnspot)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 ```r
 sp5may.ts=ts(sp5may, fr=60)
 plot(sp5may.ts)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-12-2.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
 
 
 ```r
@@ -288,7 +287,7 @@ abline(1.354e-06, 6.212e-01, col="red")
 abline(0, 0.6212, col="blue")
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 *Stre the residuals.*
 <br>
 *- Is 'white noise' a good model for the residuals?*
@@ -370,7 +369,7 @@ q.gdpdef.ts <- ts(q.gdpdef$gdpdef, frequency=4, start = c(1947, 1))
 plot(q.gdpdef.ts)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 ```r
 auto.arima(q.gdpdef.ts)
@@ -393,7 +392,7 @@ auto.arima(q.gdpdef.ts)
 plot(q.gdpdef$gdpdef)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
 
 
 
@@ -403,7 +402,7 @@ plot(fit$x,col="blue")
 lines(fitted(fit),col="red")
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 ```r
 # such valid so good
@@ -411,4 +410,4 @@ lines(fitted(fit),col="red")
 autoplot(forecast(fit))
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-19-2.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-20-2.png)<!-- -->
