@@ -192,7 +192,7 @@ m3
 ### Output interpretation
 
 On this plot we can see that there is a statistically significant correlation at lag 1.
-An exponential decay in the correlogram is typical of a first-order autoregressive model, however we chose to fit our data to MA(1) model. We can chceck our model behaviur on the plot below.
+An exponential decay in the correlogram is typical of a first-order autoregressive model, however we chose to fit our data to MA(1) model. We can check our model behavior on the plot below.
 
 
 ```r
@@ -227,7 +227,110 @@ rsq
 
 In statistics, the coefficient of determination represents the strength of the relationship or the portion of common variation in two time-series or variables. It is a statistical measure of how well the regression line approximates the real values. The coefficient of determination or \(R^2\) is mainly used to analyze how well a variable can predict another one. The returned value gives us the percentage of change of variable X that can be explained by changes in variable Y. In our case the coefficient of determination is equal to 0.8310077 or 83.1%, which means that changes can explain 83.1% of next changes.
 
-*Can you devise a profitable trading strategy based on the behaviour of the two series?*
+*Can you devise a profitable trading strategy based on the behavior of the two series?*
+
+```r
+r1pr<-HoltWinters(r1,beta=FALSE,gamma=FALSE)
+plot(r1pr$x,col="red",ylab="series and smoothing")
+par(new=TRUE)
+plot(r1pr$fitted[,1],col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+```r
+  r1pr<-HoltWinters(r1,alpha=0.1,beta=FALSE,gamma=FALSE)
+  plot(r1pr$x,col="red",ylab="series and smoothing")
+  par(new=TRUE)
+  plot(r1pr$fitted[,1],col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-11-2.png)<!-- -->
+
+```r
+r1pr12 <-HoltWinters(r1,alpha=2/(12+1),beta=FALSE,gamma=FALSE)$fitted[,1]
+r1pr26<-HoltWinters(r1,alpha=2/(26+1),beta=FALSE,gamma=FALSE)$fitted[,1]
+  plot(r1pr$x,col="red",ylab="series and smoothing")
+  par(new=TRUE)
+  plot(r1pr12,col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+  par(new=TRUE)
+  plot(r1pr26,col="yellow",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-11-3.png)<!-- -->
+
+```r
+forecast<-sign(r1pr12-r1pr26)
+returns <- 100*diff(log(r1),na.pad=FALSE)
+profits_price <-lag(forecast,-1)*as.ts(returns) 
+plot(cumsum(profits_price),type="l")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-11-4.png)<!-- -->
+
+```r
+sr <- function(X){
+  if (is.null(dim(X))) X <- as.matrix(X)
+  sqrt(1339) * colMeans(X,na.rm="TRUE") / sd(X,na.rm="TRUE")}
+sr(profits_price)
+```
+
+```
+## [1] 2.702978
+```
+
+```r
+r3pr<-HoltWinters(r3,beta=FALSE,gamma=FALSE)
+plot(r3pr$x,col="red",ylab="series and smoothing")
+par(new=TRUE)
+plot(r3pr$fitted[,1],col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+```r
+  r3pr<-HoltWinters(r3,alpha=0.1,beta=FALSE,gamma=FALSE)
+  plot(r3pr$x,col="red",ylab="series and smoothing")
+  par(new=TRUE)
+  plot(r3pr$fitted[,1],col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-12-2.png)<!-- -->
+
+```r
+r3pr12 <-HoltWinters(r3,alpha=2/(12+1),beta=FALSE,gamma=FALSE)$fitted[,1]
+r3pr26<-HoltWinters(r3,alpha=2/(26+1),beta=FALSE,gamma=FALSE)$fitted[,1]
+  plot(r3pr$x,col="red",ylab="series and smoothing")
+  par(new=TRUE)
+  plot(r3pr12,col="green",xaxt="n",yaxt="n",xlab="", ylab="")
+  par(new=TRUE)
+  plot(r3pr26,col="yellow",xaxt="n",yaxt="n",xlab="", ylab="")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-12-3.png)<!-- -->
+
+```r
+forecast<-sign(r3pr12-r3pr26)
+returns <- 100*diff(log(r3),na.pad=FALSE)
+profits_price <-lag(forecast,-1)*as.ts(returns) 
+plot(cumsum(profits_price),type="l")
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-12-4.png)<!-- -->
+
+```r
+  sr <- function(X){
+    if (is.null(dim(X))) X <- as.matrix(X)
+    sqrt(1339) * colMeans(X,na.rm="TRUE") / sd(X,na.rm="TRUE")}
+sr(profits_price)
+```
+
+```
+## [1] 0.7789303
+```
+<br>
+
+Based on the Sharpe ratio, there is better return in the first case.  
 
 
 # Task 2
@@ -236,7 +339,10 @@ In statistics, the coefficient of determination represents the strength of the r
 
 <br>
 
-*Find a model \(y_t = \beta_0 + \beta_1x_t + \varepsilon_t\); what are the estimates of \(\bata_0\) and \(\beta_1\)*
+*Find a model \(y_t = \beta_0 + \beta_1x_t + \varepsilon_t\); what are the estimates of \(\beta_0\) and \(\beta_1\)*
+<br>
+*Store the residuals.*
+
 
 
 ```r
@@ -249,14 +355,29 @@ sp5may <- read.table(www_sp5may, header=TRUE)
 plot(sp5may$lnfuture, sp5may$lnspot)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 ```r
 sp5may.ts=ts(sp5may, fr=60)
 plot(sp5may.ts)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
+
+
+```r
+lm(sp5may$lnfuture ~ sp5may$lnspot)
+```
+
+```
+## 
+## Call:
+## lm(formula = sp5may$lnfuture ~ sp5may$lnspot)
+## 
+## Coefficients:
+##   (Intercept)  sp5may$lnspot  
+##       -0.1796         1.0294
+```
 
 
 ```r
@@ -264,6 +385,20 @@ y = diff(sp5may$lnfuture)
 x = diff(sp5may$lnspot)
 
 lr = lm(y~x)
+lr
+```
+
+```
+## 
+## Call:
+## lm(formula = y ~ x)
+## 
+## Coefficients:
+## (Intercept)            x  
+##   1.354e-06    6.212e-01
+```
+
+```r
 a = arima(y, xreg=x, order=c(1,0,0)) #AR(1) error
 a
 ```
@@ -287,31 +422,120 @@ abline(1.354e-06, 6.212e-01, col="red")
 abline(0, 0.6212, col="blue")
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
-*Stre the residuals.*
+![](assignment1_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+```r
+library(orcutt)
+```
+
+```
+## Loading required package: lmtest
+```
+
+```
+## Loading required package: zoo
+```
+
+```
+## 
+## Attaching package: 'zoo'
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+```
+
+```r
+cochrane.orcutt(lr)
+```
+
+```
+## Cochrane-orcutt estimation for first order autocorrelation 
+##  
+## Call:
+## lm(formula = y ~ x)
+## 
+##  number of interaction: 2
+##  rho -0.064091
+## 
+## Durbin-Watson statistic 
+## (original):    2.12801 , p-value: 1e+00
+## (transformed): 2.00742 , p-value: 6.215e-01
+##  
+##  coefficients: 
+## (Intercept)           x 
+##    0.000001    0.621329
+```
+
+```r
+summary(cochrane.orcutt(lr))
+```
+
+```
+## Call:
+## lm(formula = y ~ x)
+## 
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 1.3306e-06 3.2916e-06   0.404    0.686    
+## x           6.2133e-01 1.7315e-02  35.883   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3e-04 on 7057 degrees of freedom
+## Multiple R-squared:  0.1543 ,  Adjusted R-squared:  0.1542
+## F-statistic: 1287.6 on 1 and 7057 DF,  p-value: < 3.645e-259
+## 
+## Durbin-Watson statistic 
+## (original):    2.12801 , p-value: 1e+00
+## (transformed): 2.00742 , p-value: 6.215e-01
+```
 <br>
+Therefore \(\beta_0 = 1.3306e-06, \: \beta_1 = 6.2133e-01\)
+
+
 *- Is 'white noise' a good model for the residuals?*
 <br>
+
+```r
+checkresiduals(lr)
+```
+
+![](assignment1_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+```
+## 
+## 	Breusch-Godfrey test for serial correlation of order up to 10
+## 
+## data:  Residuals
+## LM test = 203.77, df = 10, p-value < 2.2e-16
+```
+<br>
+Based on p-value we can conclude that the residuals are distinguishable from a white noise series. 
+
+
+
+```r
+Arima(y, xreg=x, order=c(1,1,0))
+```
+
+```
+## Series: y 
+## Regression with ARIMA(1,1,0) errors 
+## 
+## Coefficients:
+##           ar1    xreg
+##       -0.5045  0.5794
+## s.e.   0.0103  0.0193
+## 
+## sigma^2 estimated as 1.38e-07:  log likelihood=45736.61
+## AIC=-91467.22   AICc=-91467.22   BIC=-91446.64
+```
+
+
 *- Try fitting an ARMA model to the residuals. Does an ARMA(p,q) process give a better model than the 'white noise' model?*
 <br>
-*- If you restrict model selection to AR(p), is there satisfactoty AR(p) model which represents an improvement over white noise?*
-
-
-```r
-sd(x)
-```
-
-```
-## [1] 0.0002000786
-```
-
-```r
-sd(y)
-```
-
-```
-## [1] 0.0003199404
-```
 
 ```r
 auto.arima(y, xreg=x)
@@ -329,7 +553,9 @@ auto.arima(y, xreg=x)
 ## sigma^2 estimated as 8.391e-08:  log likelihood=47500.14
 ## AIC=-94990.28   AICc=-94990.27   BIC=-94955.97
 ```
-based on log likelihood, ARMA(1,2) seems to perform slightly better
+Based on log likelihood, ARMA(1,2) seems to perform slightly better than ARIMA(1,1,0)
+*- If you restrict model selection to AR(p), is there satisfactoty AR(p) model which represents an improvement over white noise?*
+
 
 ```r
 auto.arima(y, xreg=x, max.d = 0, max.q = 0)
@@ -347,19 +573,19 @@ auto.arima(y, xreg=x, max.d = 0, max.q = 0)
 ## sigma^2 estimated as 8.538e-08:  log likelihood=47440.22
 ## AIC=-94866.44   AICc=-94866.43   BIC=-94818.41
 ```
-AR(5) is slightly better than AR(1)
+AR(5) is slightly better than ARIMA(1,1,0).
 <br>
-*Use the command `gls` (generalised least squares) from the package `nlme` and for the residuals, ude `correlation=corARMA(p=?, q=?)` with the values p and q which you obtained when finding a suitable ARMA process for the residuals. Are \(\beta_0\) and \(\beta_1\) substantially different? Is the \(\sigma^2\) estimate substantially different?*
+*Use the command `gls` (generalised least squares) from the package `nlme` and for the residuals, use `correlation=corARMA(p=?, q=?)` with the values p and q which you obtained when finding a suitable ARMA process for the residuals. Are \(\beta_0\) and \(\beta_1\) substantially different? Is the \(\sigma^2\) estimate substantially different?*
 
 
 ```r
 # gls(y~x, correlation = corARMA(p=1, q=2))
 ```
-
+This part of code is not working.
 
 # Task 3
 
-*The data for this excercise is found in the file `q-gdpdef.txt` on the course page. It contains the data for the United States for the first quater of 1947 to the last quater of 2008. Data is in the format year, month, day and deflator. The data are seasionally adjusted and equal to 100 for the year 2000. Build ARIMA model for the serier and check the validity of the fitted model. Use the fitted model to predict the inflation for each quater of 2009.*
+*The data for this excercise is found in the file `q-gdpdef.txt` on the course page. It contains the data for the United States for the first quater of 1947 to the last quater of 2008. Data is in the format year, month, day and deflator. The data are seasionally adjusted and equal to 100 for the year 2000. Build ARIMA model for the series and check the validity of the fitted model. Use the fitted model to predict the inflation for each quater of 2009.*
 
 
 ```r
@@ -369,7 +595,7 @@ q.gdpdef.ts <- ts(q.gdpdef$gdpdef, frequency=4, start = c(1947, 1))
 plot(q.gdpdef.ts)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 
 ```r
 auto.arima(q.gdpdef.ts)
@@ -392,22 +618,13 @@ auto.arima(q.gdpdef.ts)
 plot(q.gdpdef$gdpdef)
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
 
 
 
 ```r
 fit <- Arima(q.gdpdef.ts, order=c(0,2,1))
-plot(fit$x,col="blue")
-lines(fitted(fit),col="red")
-```
-
-![](assignment1_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
-
-```r
-# such valid so good
-
 autoplot(forecast(fit))
 ```
 
-![](assignment1_files/figure-html/unnamed-chunk-20-2.png)<!-- -->
+![](assignment1_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
